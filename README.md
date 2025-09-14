@@ -22,8 +22,10 @@ The app now includes an intelligent planning feature that uses Azure AI to break
 ### How It Works:
 1. **Add a main task** (e.g., "Plan a birthday party")
 2. **Click the purple "PlanForMe" button** with the magic wand icon (🪄)
-3. **The AI generates up to 10 relevant subtasks** automatically
-4. **Subtasks are added to your task** and can be edited, completed, or deleted like any other subtask
+3. **Get intelligent subtasks**:
+   - **Demo Mode**: Smart pattern-based subtasks (no configuration needed)
+   - **AI Mode**: Real Azure AI-generated subtasks (requires API setup)
+4. **Subtasks are added automatically** and can be edited, completed, or deleted like any other subtask
 
 ### Setting Up AI Integration:
 1. **Click the settings gear (⚙️)** in the top right corner
