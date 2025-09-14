@@ -31,7 +31,7 @@ jobs:
           app_location: "/" # App source code path
           api_location: "" # Remove API for now - deploy separately
           output_location: "" # Built app content directory - optional
-          skip_app_build: true # Skip building since it's static HTML/CSS/JS
+          app_build_command: "echo 'Static files ready - no build needed'"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
