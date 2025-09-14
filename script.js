@@ -374,13 +374,6 @@ Example response format: ["Subtask 1", "Subtask 2", "Subtask 3"]`;
         const task = this.tasks.find(t => t.id === taskId);
         if (!task) return;
 
-        // Check if AI is configured
-        if (!this.aiSettings.endpoint || !this.aiSettings.apiKey) {
-            // Show demo subtasks instead of real AI
-            this.showDemoPlanning(taskId, task.title);
-            return;
-        }
-
         const planButton = document.querySelector(`[data-task-id="${taskId}"] .plan-for-me-btn`);
         if (!planButton) return;
 
@@ -391,7 +384,24 @@ Example response format: ["Subtask 1", "Subtask 2", "Subtask 3"]`;
         planButton.innerHTML = '<span class="magic-wand">🪄</span> Planning...';
 
         try {
-            const subtasks = await this.makeAzureAIRequest(task.title);
+            // Call our Azure Function
+            const response = await fetch('/api/planTask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    taskTitle: task.title
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to generate plan');
+            }
+
+            const data = await response.json();
+            const subtasks = data.subtasks;
             
             // Add subtasks to the task
             subtasks.forEach(subtaskTitle => {
@@ -427,134 +437,6 @@ Example response format: ["Subtask 1", "Subtask 2", "Subtask 3"]`;
             planButton.disabled = false;
             planButton.classList.remove('loading');
         }
-    }
-
-    showDemoPlanning(taskId, taskTitle) {
-        const task = this.tasks.find(t => t.id === taskId);
-        if (!task) return;
-
-        const planButton = document.querySelector(`[data-task-id="${taskId}"] .plan-for-me-btn`);
-        if (!planButton) return;
-
-        // Show loading state
-        planButton.disabled = true;
-        planButton.classList.add('loading');
-        const originalText = planButton.innerHTML;
-        planButton.innerHTML = '<span class="magic-wand">🪄</span> Demo Planning...';
-
-        // Demo subtasks based on common task patterns
-        const demoSubtasks = this.generateDemoSubtasks(taskTitle);
-        
-        setTimeout(() => {
-            // Add demo subtasks to the task
-            demoSubtasks.forEach(subtaskTitle => {
-                const subtask = {
-                    id: this.generateSubtaskId(),
-                    title: subtaskTitle,
-                    completed: false,
-                    createdAt: new Date().toISOString(),
-                    aiGenerated: true,
-                    isDemo: true
-                };
-                task.subtasks.push(subtask);
-            });
-
-            this.saveToStorage();
-            this.render();
-            
-            // Show demo feedback
-            planButton.innerHTML = '<span class="magic-wand">🎭</span> Demo Done!';
-            setTimeout(() => {
-                planButton.innerHTML = originalText;
-                planButton.disabled = false;
-                planButton.classList.remove('loading');
-            }, 2000);
-
-            // Show demo notification
-            this.showDemoNotification();
-        }, 1500); // Simulate API delay
-    }
-
-    generateDemoSubtasks(taskTitle) {
-        const taskLower = taskTitle.toLowerCase();
-        
-        // Pattern matching for common tasks
-        if (taskLower.includes('birthday') || taskLower.includes('party')) {
-            return [
-                'Choose a date and venue',
-                'Create guest list',
-                'Send invitations',
-                'Plan menu and order food',
-                'Buy decorations',
-                'Organize entertainment/activities',
-                'Prepare party favors',
-                'Set up on the day'
-            ];
-        } else if (taskLower.includes('vacation') || taskLower.includes('trip') || taskLower.includes('travel')) {
-            return [
-                'Research destinations',
-                'Check budget and dates',
-                'Book flights/transportation',
-                'Reserve accommodation',
-                'Plan itinerary',
-                'Pack essentials',
-                'Arrange travel insurance'
-            ];
-        } else if (taskLower.includes('presentation') || taskLower.includes('meeting')) {
-            return [
-                'Define objectives and agenda',
-                'Research content and data',
-                'Create presentation slides',
-                'Practice delivery',
-                'Prepare handouts',
-                'Test technology setup',
-                'Send meeting invites'
-            ];
-        } else if (taskLower.includes('project') || taskLower.includes('work')) {
-            return [
-                'Define project scope',
-                'Break down into phases',
-                'Assign team responsibilities',
-                'Set milestones and deadlines',
-                'Gather required resources',
-                'Create progress tracking system'
-            ];
-        } else {
-            // Generic subtasks for any task
-            return [
-                'Research and gather information',
-                'Create a detailed plan',
-                'Identify required resources',
-                'Set timeline and milestones',
-                'Begin implementation',
-                'Monitor progress and adjust'
-            ];
-        }
-    }
-
-    showDemoNotification() {
-        // Create demo notification
-        const notification = document.createElement('div');
-        notification.className = 'demo-notification';
-        notification.innerHTML = `
-            <div class="demo-content">
-                <span class="demo-icon">🎭</span>
-                <div class="demo-text">
-                    <strong>Demo Mode Active</strong>
-                    <p>These are sample subtasks. Configure Azure AI in settings for real AI planning!</p>
-                </div>
-                <button class="demo-close" onclick="this.parentElement.parentElement.remove()">×</button>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto-remove after 8 seconds
-        setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
-        }, 8000);
     }
 
     showAddSubtaskInput(taskId) {
