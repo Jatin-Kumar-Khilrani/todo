@@ -2,6 +2,8 @@
 
 A simple, elegant to-do list application built with HTML, CSS, and JavaScript, now enhanced with AI-powered task planning.
 
+*🚀 Deployment Status: API token updated - triggering new deployment*
+
 ## Features
 
 ✅ **Add Main Tasks** - Create primary tasks with a simple text input  
