@@ -4,9 +4,9 @@ class TodoApp {
         this.taskIdCounter = 1;
         this.subtaskIdCounter = 1;
         this.aiSettings = {
-            endpoint: '',
+            endpoint: 'https://jkhilrani-vibe-2025-resource.cognitiveservices.azure.com/',
             apiKey: '',
-            deploymentName: 'gpt-35-turbo'
+            deploymentName: 'gpt-4o-mini-vibe'
         };
         
         this.initializeElements();
