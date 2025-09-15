@@ -385,7 +385,7 @@ Example response format: ["Subtask 1", "Subtask 2", "Subtask 3"]`;
 
         try {
             // Call our Azure Function
-            const response = await fetch('/api/planTask', {
+            const response = await fetch('https://todo-ai-functions.azurewebsites.net/api/plantask', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
