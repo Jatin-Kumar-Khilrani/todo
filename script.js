@@ -384,7 +384,7 @@ Example response format: ["Subtask 1", "Subtask 2", "Subtask 3"]`;
         planButton.innerHTML = '<span class="magic-wand">🪄</span> Planning...';
 
         try {
-            // Call our Azure Function
+            // Call our Azure Function (updated with CORS fixes)
             const response = await fetch('https://todo-ai-functions.azurewebsites.net/api/plantask', {
                 method: 'POST',
                 headers: {
