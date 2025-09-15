@@ -1,0 +1,7 @@
+{
+  "name": "todo-ai-app",
+  "version": "1.0.1",
+  "scripts": {
+    "build": "echo 'Build complete'"
+  }
+}
